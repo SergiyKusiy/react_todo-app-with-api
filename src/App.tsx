@@ -26,6 +26,17 @@ import {
   USER_ID,
 } from './api/todos';
 
+const filterTodos = (todos: Todo[], filter: Filter): Todo[] => {
+  switch (filter) {
+    case Filter.Active:
+      return todos.filter(todo => !todo.completed);
+    case Filter.Completed:
+      return todos.filter(todo => todo.completed);
+    default:
+      return todos;
+  }
+};
+
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,13 +96,13 @@ export const App: React.FC = () => {
         .then(newTodo => {
           setTodos(currentTodo => [...currentTodo, newTodo]);
           setError(ErrorMessage.Default);
+          setTitle('');
         })
         .catch(() => {
           setError(ErrorMessage.AddTodo);
         })
         .finally(() => {
           setTempTodo(null);
-          setTitle('');
           setIsAdding(false);
         });
     },
@@ -236,17 +247,6 @@ export const App: React.FC = () => {
     setTitle(value);
     if (error === ErrorMessage.TitleEmpty) {
       setError(ErrorMessage.Default);
-    }
-  };
-
-  const filterTodos = (todos: Todo[], filter: Filter): Todo[] => {
-    switch (filter) {
-      case Filter.Active:
-        return todos.filter(todo => !todo.completed);
-      case Filter.Completed:
-        return todos.filter(todo => todo.completed);
-      default:
-        return todos;
     }
   };
 
